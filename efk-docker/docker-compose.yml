@@ -24,7 +24,7 @@ services:
 
 # Created using the Docker image elasticsearch:8.5.3
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    image: elasticsearch:${STACK_VERSION}
     container_name: elasticsearch
     ports: # Exposes the default port 9200
       - 9200:9200
@@ -63,7 +63,7 @@ services:
 # Created using the Docker image kibana:8.5.3
   kibana:
     #build: ../kibana
-    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    image: kibana:${STACK_VERSION}
     container_name: kibana
     links: # Links kibana service to the elasticsearch container
       - elasticsearch
