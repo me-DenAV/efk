@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+  nginx:
+    container_name: nginx
+    build: nginx/
+    links:
+      - fluentd
+      - node_app
+    ports:
+      - '80:80'
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: docker.{{.FullID}}
