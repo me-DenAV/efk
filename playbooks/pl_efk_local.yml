@@ -24,7 +24,7 @@
         recurse: true
         state: directory
 
-    - name: Container Grafana deploy
+    - name: Containers EFK deploy
       community.docker.docker_compose:
         project_src: ../efk-docker
-
+        build: true
