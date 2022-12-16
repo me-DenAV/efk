@@ -18,7 +18,9 @@ services:
       - 24224:24224
       - 24224:24224/udp
     networks:
-      - elastic
+      elastic:
+        aliases:
+          - fluentd
 
 # Created using the Docker image elasticsearch:8.5.3
   elasticsearch:
@@ -31,7 +33,9 @@ services:
     volumes: # Stores elasticsearch data locally on the esdata Docker volume
       - ../esdata:/usr/share/elasticsearch/data
     networks:
-      - elastic
+      elastic:
+        aliases:
+          - elasticsearch
 
 # Created using the Docker image kibana:8.5.3
   kibana:
@@ -46,7 +50,9 @@ services:
     environment: # Defined host configuration
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     networks:
-      - elastic
+      elastic:
+        aliases:
+          - kibana
 
 networks:
   elastic:
