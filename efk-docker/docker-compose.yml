@@ -1,0 +1,59 @@
+version: '3.5'
+
+# Define the Docker volume named esdata for the Elasticsearch container.
+volumes:
+  esdata:
+
+# Deploying three container services (fluentd, elasticsearch, and kibana)
+services:
+# Deploy using the custom image automatically be created during the build process.
+  fluentd: 
+    build: ../fluentd
+    container_name: fluentd
+    links: # Sends incoming logs to the elasticsearch container.
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    ports: # Exposes the port 24224 on both TCP and UDP protocol for log aggregation
+      - 24224:24224
+      - 24224:24224/udp
+    networks:
+      - elastic
+
+# Created using the Docker image elasticsearch:8.5.3
+  elasticsearch:
+    image: elasticsearch:8.5.3
+    container_name: elasticsearch
+    ports: # Exposes the default port 9200
+      - 9200:9200
+    environment:
+      - discovery.type=single-node # Runs as a single-node
+    volumes: # Stores elasticsearch data locally on the esdata Docker volume
+      - ../esdata:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+# Created using the Docker image kibana:8.5.3
+  kibana:
+    build: ../kibana
+    container_name: kibana
+    links: # Links kibana service to the elasticsearch container
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    ports: # Runs kibana service on default port 5601
+      - 5601:5601
+    environment: # Defined host configuration
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - elastic
+
+networks:
+  elastic:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.235.0/24

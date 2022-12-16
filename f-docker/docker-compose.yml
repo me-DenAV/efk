@@ -1,0 +1,18 @@
+version: "3"
+
+# Define the Docker volume named esdata for the Elasticsearch container.
+volumes:
+  esdata:
+
+# Deploying three container services (fluentd, elasticsearch, and kibana)
+services:
+# Deploy using the custom image automatically be created during the build process.
+  fluentd: 
+    build: ./fluentd
+    links: # Sends incoming logs to the elasticsearch container.
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    ports: # Exposes the port 24224 on both TCP and UDP protocol for log aggregation
+      - 24224:24224
+      - 24224:24224/udp
