@@ -12,8 +12,8 @@
       file:
         path: "../esdata"
         mode: 0755
-        group: 0
-        owner: 1000
+        group: "0"
+        owner: "1000"
         recurse: true
         state: directory
 
