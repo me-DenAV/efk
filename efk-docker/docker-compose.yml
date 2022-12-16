@@ -38,8 +38,6 @@ services:
       - xpack.license.self_generated.type=${LICENSE}
     volumes: # Stores elasticsearch data locally on the esdata Docker volume
       - ../esdata:/usr/share/elasticsearch/data
-    env_file:
-      - "../env_efk/.env_efk"
     mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
@@ -77,8 +75,6 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
       - ../kibanadata:/usr/share/kibana/data
-    env_file:
-      - "../env_efk/.env_efk"
     networks:
       elastic:
         aliases:
