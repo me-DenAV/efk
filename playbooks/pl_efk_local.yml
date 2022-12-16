@@ -19,21 +19,16 @@
   tasks:
     - name: Create project path for elasticsearch
       file:
-        path: "../esdata"
+        path: "{{ item }}"
         mode: 0755
         group: "0"
         owner: "1000"
         recurse: true
         state: directory
-
-    - name: Create path for kibana
-      file:
-        path: "../kibanadata"
-        mode: 0755
-        group: "0"
-        owner: "1000"
-        recurse: true
-        state: directory
+      with_items:
+        - "../esdata"
+        - "../certs"
+        - "../kibanadata"
 
     - name: Containers EFK deploy
       community.docker.docker_compose:
