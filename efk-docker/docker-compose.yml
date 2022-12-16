@@ -50,9 +50,9 @@ services:
         find . -type d -exec chmod 750 \{\} \;;
         find . -type f -exec chmod 640 \{\} \;;
         echo "Waiting for Elasticsearch availability";
-        until curl -s --cacert config/certs/ca/ca.crt https://elasticsearch:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
+        until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
         echo "Setting kibana_system password";
-        until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://elasticsearch:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://es01:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
         echo "All done!";
       '
     networks:
@@ -70,9 +70,9 @@ services:
     build: ../fluentd
     container_name: fluentd
     links: # Sends incoming logs to the elasticsearch container.
-      - elasticsearch
+      - es01
     depends_on:
-      - elasticsearch
+      - es01
     ports: # Exposes the port 24224 on both TCP and UDP protocol for log aggregation
       - 24224:24224
       - 24224:24224/udp
@@ -82,12 +82,12 @@ services:
           - fluentd
 
 # Created using the Docker image elasticsearch:8.5.3
-  elasticsearch:
+  es01:
     depends_on:
       setup:
         condition: service_healthy
     image: elasticsearch:${STACK_VERSION}
-    container_name: elasticsearch
+    container_name: es01
     ports: # Exposes the default port 9200
       - ${ES_PORT}:9200
     environment:
@@ -119,7 +119,7 @@ services:
     networks:
       elastic:
         aliases:
-          - elasticsearch
+          - es01
     healthcheck:
       test:
         [
@@ -136,16 +136,17 @@ services:
     image: kibana:${STACK_VERSION}
     container_name: kibana
     links: # Links kibana service to the elasticsearch container
-      - elasticsearch
+      - es01
     depends_on:
-      - elasticsearch
+      es01:
+        condition: service_healthy
     ports: # Runs kibana service on default port 5601
       - ${KIBANA_PORT}:5601
     environment: # Defined host configuration
       - SERVERNAME=kibana
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://es01:9200
     volumes:
       - ../kibanadata:/usr/share/kibana/data
     networks:
