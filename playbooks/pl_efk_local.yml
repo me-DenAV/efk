@@ -1,7 +1,7 @@
 ## Deploy service golang with Ansible
-# ansible-playbook playbooks/pl_grafana_local.yml
+# ansible-playbook playbooks/pl_efk_local.yml
 ---
-- name: Docker Grafana deploy
+- name: Docker EFK deploy
   hosts: localhost
   connection: local 
   become: true
@@ -10,23 +10,14 @@
   tasks:
     - name: Create project path and subfolder for container
       file:
-        path: "../data/grafana_data"
+        path: "../esdata"
         mode: 0755
-        group: 472
-        owner: 472
+        group: 0
+        owner: 1000
         recurse: true
         state: directory
 
-    - name: Copy files provisioning
-      ansible.builtin.copy:
-        src: ../grafana/provisioning
-        dest: ../data
-        mode: 0755
-        group: 472
-        owner: 472
-        remote_src: true
-
     - name: Container Grafana deploy
       community.docker.docker_compose:
-        project_src: ../grafana
+        project_src: ../efk-docker
 
