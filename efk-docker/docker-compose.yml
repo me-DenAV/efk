@@ -2,7 +2,12 @@ version: '3.5'
 
 # Define the Docker volume named esdata for the Elasticsearch container.
 volumes:
+  certs:
+    driver: local
   esdata:
+    driver: local
+  kibanadata:
+    driver: local
 
 # Deploying three container services (fluentd, elasticsearch, and kibana)
 services:
