@@ -1,0 +1,8 @@
+---
+# vars file for setup_efk_docker
+efk_project_path: '/efk-docker'
+
+efk_container_volumes_local_path:
+  - "{{ efk_project_path }}/certs"
+  - "{{ efk_project_path }}/esdata"
+  - "{{ efk_project_path }}/kibanadata"

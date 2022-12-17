@@ -13,9 +13,10 @@ volumes:
 services:
   setup:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    hostname: setup
     container_name: setup
     volumes:
-      - ../certs:/usr/share/elasticsearch/config/certs
+      - "{{ efk_project_path }}/certs:/usr/share/elasticsearch/config/certs"
     user: "0"
     command: >
       bash -c '
@@ -65,28 +66,13 @@ services:
       timeout: 5s
       retries: 120
 
-# Deploy using the custom image automatically be created during the build process.
-  fluentd: 
-    build: ../fluentd
-    container_name: fluentd
-    links: # Sends incoming logs to the elasticsearch container.
-      - es01
-    depends_on:
-      - es01
-    ports: # Exposes the port 24224 on both TCP and UDP protocol for log aggregation
-      - 24224:24224
-      - 24224:24224/udp
-    networks:
-      elastic:
-        aliases:
-          - fluentd
-
 # Created using the Docker image elasticsearch:8.5.3
   es01:
     depends_on:
       setup:
         condition: service_healthy
     image: elasticsearch:${STACK_VERSION}
+    hostname: es01
     container_name: es01
     ports: # Exposes the default port 9200
       - ${ES_PORT}:9200
@@ -109,8 +95,8 @@ services:
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
     volumes: # Stores elasticsearch data locally on the esdata Docker volume
-      - ../certs:/usr/share/elasticsearch/config/certs
-      - ../esdata:/usr/share/elasticsearch/data
+      - "{{ efk_project_path }}/certs:/usr/share/elasticsearch/config/certs"
+      - "{{ efk_project_path }}/esdata:/usr/share/elasticsearch/data"
     mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
@@ -132,8 +118,9 @@ services:
 
 # Created using the Docker image kibana:8.5.3
   kibana:
-    #build: ../kibana
+    #build: "{{ efk_project_path }}/kibana"
     image: kibana:${STACK_VERSION}
+    hostname: kibana
     container_name: kibana
     links: # Links kibana service to the elasticsearch container
       - es01
@@ -149,8 +136,8 @@ services:
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
     volumes:
-      - ../certs:/usr/share/kibana/config/certs
-      - ../kibanadata:/usr/share/kibana/data
+      - "{{ efk_project_path }}/certs:/usr/share/kibana/config/certs"
+      - "{{ efk_project_path }}/kibanadata:/usr/share/kibana/data"
     mem_limit: ${MEM_LIMIT}
     networks:
       elastic:

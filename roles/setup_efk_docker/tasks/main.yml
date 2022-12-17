@@ -1,0 +1,29 @@
+---
+# tasks file for setup_efk_docker
+# chown -R 1000:0 /var/lib/zabbix/
+
+- name: Create project path for elasticsearch
+  file:
+    path: "{{ item }}"
+    mode: 0755
+    group: "0"
+    owner: "1000"
+    recurse: true
+    state: directory
+  with_items: "{{ efk_container_volumes_local_path }}"
+
+- name: Check path for project
+  stat:
+    path: "{{ efk_project_path }}"
+  register: check_project_path
+
+- name: preparation docker-compose file
+  include_tasks: docker_prepare.yml
+  when: check_project_path.stat.exists
+
+- name: Containers EFK deploy
+  community.docker.docker_compose:
+    project_src: "{{ efk_project_path }}"
+    build: true
+    state: "{{ efk_docker_state }}"
+  when: check_path_docker_compose_file.stat.exists

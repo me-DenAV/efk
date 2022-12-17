@@ -16,21 +16,15 @@
   become: true
   gather_facts: false
 
+  vars:
+    # what should be installed
+    must_f_installed: false
+    
   tasks:
-    - name: Create project path for elasticsearch
-      file:
-        path: "{{ item }}"
-        mode: 0755
-        group: "0"
-        owner: "1000"
-        recurse: true
-        state: directory
-      with_items:
-        - "../esdata"
-        - "../certs"
-        - "../kibanadata"
+    - name: Role setup efk with docker
+      include_role: 
+        name: setup_efk_docker
+      vars:
+        efk_docker_state: 'present' # 'absent'
+      when: ansible_os_family != 'Windows'
 
-    - name: Containers EFK deploy
-      community.docker.docker_compose:
-        project_src: ../efk-docker
-        build: true

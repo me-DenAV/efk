@@ -1,0 +1,25 @@
+version: '3.5'
+
+# Deploying three container services (fluentd, elasticsearch, and kibana)
+services:
+
+# Deploy using the custom image automatically be created during the build process.
+  fluentd: 
+    build: "{{ efk_project_path }}/fluentd"
+    hostname: fluentd
+    container_name: fluentd
+    ports: # Exposes the port 24224 on both TCP and UDP protocol for log aggregation
+      - 24224:24224
+      - 24224:24224/udp
+    networks:
+      - elastic
+
+networks:
+  elastic:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.235.0/24

@@ -1,0 +1,76 @@
+---
+# elasticsearch + kibana + fluentd
+- name: variables for elasticsearch + kibana + fluentd
+  block:
+    - name: Set default template for docker-compose
+      set_fact:
+        efk_docker_compose_tmp: 'docker-compose_efk.yml.j2'
+    
+    - name: Create variables file for elasticsearch + kibana + fluentd
+      template:
+        src: "env_vars/.env_efk"
+        dest: "{{ efk_project_path }}/.env"
+        
+    - name: Copy variables for build kibana
+      copy:
+        dest: "{{ efk_project_path }}"
+        src: "{{ inventory_dir }}/kibana"
+        remote_src: true
+
+  when: must_efk_installed|bool == true
+
+# elasticsearch + kibana
+- name: variables for elasticsearch + kibana
+  block:
+    - name: Set default template for docker-compose
+      set_fact:
+        efk_docker_compose_tmp: 'docker-compose_ek.yml.j2'
+    
+    - name: Create variables file for elasticsearch + kibana
+      template:
+        src: "env_vars/.env_ek"
+        dest: "{{ efk_project_path }}/.env"
+
+    - name: Copy variables for build kibana
+      copy:
+        dest: "{{ efk_project_path }}"
+        src: "{{ inventory_dir }}/kibana"
+        remote_src: true
+
+  when: must_ek_installed|bool == true
+
+# fluentd
+- name: variables for fluentd
+  block:
+    - name: Set default template for docker-compose
+      set_fact:
+        efk_docker_compose_tmp: 'docker-compose_f.yml.j2'
+    
+    - name: Create variables file for fluentd
+      template:
+        src: "env_vars/.env_f"
+        dest: "{{ efk_project_path }}/.env"
+    
+    - name: Copy variables for build fluentd
+      copy:
+        dest: "{{ efk_project_path }}"
+        src: "{{ inventory_dir }}/fluentd"
+        remote_src: true
+
+  when: must_f_installed|bool == true
+
+# Docker-compose.yml
+- name: Create docker-compose file
+  template:
+    src: "{{ efk_docker_compose_tmp }}"
+    dest: "{{ efk_project_path }}/{{ efk_docker_compose_file }}"
+    force: true
+  register: created_dockercompose_file
+  when: 
+    - efk_docker_compose_tmp is defined
+    - efk_docker_compose_tmp|length > 0
+
+- name: Check path for docker-compose file
+  stat:
+    path: "{{ efk_project_path }}/{{ efk_docker_compose_file }}"
+  register: check_path_docker_compose_file

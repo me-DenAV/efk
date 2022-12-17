@@ -1,0 +1,30 @@
+## Deploy service golang with Ansible
+# ansible-playbook playbooks/pl_efk_local.yml
+
+# Configuration EFK
+# docker exec -it elasticsearch /usr/share/elasticsearch/bin/elasticsearch-reset-password -i -u elastic
+# docker exec -it elasticsearch /usr/share/elasticsearch/bin/elasticsearch-reset-password -i -u kibana_system
+
+# docker exec -it elasticsearch /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+# docker cp elasticsearch:/usr/share/elasticsearch/config/certs/http_ca.crt .
+
+# docker exec -it kibana bin/kibana-verification-code
+---
+- name: Docker EFK deploy
+  hosts: localhost
+  connection: local 
+  become: true
+  gather_facts: false
+
+  vars:
+    # what should be installed
+    must_ek_installed: false
+    
+  tasks:
+    - name: Role setup efk with docker
+      include_role: 
+        name: setup_efk_docker
+      vars:
+        efk_docker_state: 'present' # 'absent'
+      when: ansible_os_family != 'Windows'
+
