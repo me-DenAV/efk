@@ -1,9 +1,18 @@
 ---
 # defaults file for setup_efk_docker
 
+# what should be installed
+# elasticsearch + kibana + fluentd
 must_efk_installed: false
+
+# elasticsearch + kibana
 must_ek_installed: false
+
+# fluentd
 must_f_installed: false
+
+# name for docker-compose file
+efk_docker_compose_file: docker-compose.yml
 
 # Sate Specifying 'present' is the same as running docker-compose up resp or 
 # 'absent' is the same as running docker-compose down.
