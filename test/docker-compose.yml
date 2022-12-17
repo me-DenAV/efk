@@ -4,9 +4,6 @@ services:
   nginx:
     container_name: nginx
     image: nginx:latest
-    links:
-      - fluentd
-      - node_app
     ports:
       - '80:80'
     logging:
