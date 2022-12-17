@@ -14,11 +14,11 @@
   hosts: localhost
   connection: local 
   become: true
-  gather_facts: false
+  gather_facts: true
 
   vars:
     # what should be installed
-    must_f_installed: false
+    must_f_installed: true
     
   tasks:
     - name: Role setup efk with docker
