@@ -1,5 +1,5 @@
 ## Deploy service golang with Ansible
-# ansible-playbook playbooks/pl_efk_local.yml
+# ansible-playbook playbooks/pl_setup_efk_local.yml
 
 # Configuration EFK
 # docker exec -it elasticsearch /usr/share/elasticsearch/bin/elasticsearch-reset-password -i -u elastic
