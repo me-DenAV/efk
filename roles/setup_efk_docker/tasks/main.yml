@@ -27,3 +27,12 @@
     build: true
     state: "{{ efk_docker_state }}"
   when: check_path_docker_compose_file.stat.exists
+
+- name: delete data if 'efk_docker_state' == 'absent'
+  file:
+    path: "{{ efk_project_path }}"
+    state: "absent"
+  become: true
+  when: 
+    - efk_docker_state == 'absent'
+    - efk_data_remove | bool == true

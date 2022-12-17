@@ -5,9 +5,12 @@ must_efk_installed: false
 must_ek_installed: false
 must_f_installed: false
 
-# Sate Specifying present is the same as running docker-compose up resp or 
-# absent is the same as running docker-compose down.
+# Sate Specifying 'present' is the same as running docker-compose up resp or 
+# 'absent' is the same as running docker-compose down.
 efk_docker_state: present
+
+# delete data if 'efk_docker_state' == 'absent'
+efk_data_remove: false 
 
 # Password for the 'elastic' user (at least 6 characters)
 efk_elastic_password: R03QGNeSY9zpkcFWtVPg
