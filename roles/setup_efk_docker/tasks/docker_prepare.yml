@@ -16,6 +16,12 @@
         dest: "{{ efk_project_path }}"
         src: "{{ role_path }}/../../kibana"
         remote_src: true
+    
+    - name: Copy variables for build fluentd
+      copy:
+        dest: "{{ efk_project_path }}"
+        src: "{{ role_path }}/../../fluentd"
+        remote_src: true
 
   when: must_efk_installed|bool == true
 
