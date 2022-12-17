@@ -14,7 +14,7 @@
     - name: Copy variables for build kibana
       copy:
         dest: "{{ efk_project_path }}"
-        src: "{{ role_path }}/../kibana"
+        src: "{{ role_path }}/../../kibana"
         remote_src: true
 
   when: must_efk_installed|bool == true
@@ -34,7 +34,7 @@
     - name: Copy variables for build kibana
       copy:
         dest: "{{ efk_project_path }}"
-        src: "{{ inventory_dir }}/kibana"
+        src: "{{ role_path }}/../../kibana"
         remote_src: true
 
   when: must_ek_installed|bool == true
@@ -54,7 +54,7 @@
     - name: Copy variables for build fluentd
       copy:
         dest: "{{ efk_project_path }}"
-        src: "{{ inventory_dir }}/fluentd"
+        src: "{{ role_path }}/../../fluentd"
         remote_src: true
 
   when: must_f_installed|bool == true
