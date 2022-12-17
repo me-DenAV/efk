@@ -14,7 +14,7 @@
     - name: Copy variables for build kibana
       copy:
         dest: "{{ efk_project_path }}"
-        src: "{{ inventory_dir }}/kibana"
+        src: "{{ role_path }}/../kibana"
         remote_src: true
 
   when: must_efk_installed|bool == true
