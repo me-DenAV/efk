@@ -19,7 +19,7 @@ efk_docker_compose_file: docker-compose.yml
 efk_docker_state: present
 
 # delete data if 'efk_docker_state' == 'absent'
-efk_data_remove: false 
+efk_data_remove: false
 
 # Password for the 'elastic' user (at least 6 characters)
 efk_elastic_password: R03QGNeSY9zpkcFWtVPg

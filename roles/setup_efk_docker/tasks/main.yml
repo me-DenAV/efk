@@ -21,6 +21,17 @@
   include_tasks: docker_prepare.yml
   when: check_project_path.stat.exists
 
+- name: permission for project path
+  file:
+    path: "{{ efk_project_path }}"
+    mode: 0755
+    group: "0"
+    owner: "1000"
+    recurse: true
+    state: directory
+  when: check_project_path.stat.exists
+
+# Docker deploy or destroy
 - name: Containers EFK deploy
   community.docker.docker_compose:
     project_src: "{{ efk_project_path }}"

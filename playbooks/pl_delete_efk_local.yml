@@ -1,0 +1,21 @@
+## Deploy service golang with Ansible
+# ansible-playbook playbooks/pl_delete_efk_local.yml
+
+---
+- name: Docker EFK deploy
+  hosts: localhost
+  connection: local 
+  become: true
+  gather_facts: true
+
+  vars:
+    efk_data_remove: true
+
+  tasks:
+    - name: Role setup efk with docker
+      include_role: 
+        name: setup_efk_docker
+      vars:
+        efk_docker_state: 'absent'
+      when: ansible_os_family != 'Windows'
+
