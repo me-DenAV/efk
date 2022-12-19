@@ -1,6 +1,21 @@
-# Web Server denav.net
+# EFK Stack with docker
 
-This folder contains a configuration that deploys a monitoring of web servers 
+This folder contains a configuration that deploys a EFK Stack with docker. 
+
+You can also install individual stack components.
+To do this, you need to change the value of the variable or run the desired playbook.
+
+```yml
+# what should be installed
+# elasticsearch + kibana + fluentd
+must_efk_installed: false
+
+# elasticsearch + kibana
+must_ek_installed: false
+
+# fluentd
+must_f_installed: false
+```
 
 ## Pre-requisites
 
@@ -21,13 +36,24 @@ sudo apt install python3-pip -y
 sudo apt install ansible -y
 
 # echo "Install Docker ..."
+cd /home/ubuntu/
 git clone https://gitlab.com/adv-public/skillbox-diplom/infrastructure/ansible/install-docker.git
 cd /home/ubuntu/install-docker
 ansible-playbook playbooks/pl_install_docker_local.yml
 
-# echo "Deploying application..."
+# echo "Deploying Fluentd..."
 cd /home/ubuntu/
-git clone https://gitlab.com/adv-public/skillbox-diplom/infrastructure/ansible/setup-monitoring.git
-cd /home/ubuntu/setup-monitoring/
-ansible-playbook playbooks/pl_monitoring_local.yml
+git clone https://gitlab.com/adv-public/skillbox-diplom/infrastructure/ansible/setup-efk.git
+cd /home/ubuntu/setup-efk/
+ansible-playbook playbooks/pl_setup_f_local.yml
+```
+
+
+
+Clean up when you're done:
+
+```shell
+# echo "Destroy EFK Stack..."
+cd /home/ubuntu/setup-efk/
+ansible-playbook playbooks/pl_delete_efk_local.yml
 ```
