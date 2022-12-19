@@ -11,6 +11,7 @@ services:
     ports: # Exposes the port 24224 on both TCP and UDP protocol for log aggregation
       - 24224:24224
       - 24224:24224/udp
+    restart: always
     networks:
       - elastic
 
